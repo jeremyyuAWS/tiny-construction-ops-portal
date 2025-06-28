@@ -25,7 +25,10 @@ import {
   Database,
   MessageSquare,
   ArrowRight,
-  Monitor
+  Monitor,
+  Shield,
+  Search,
+  Send
 } from 'lucide-react';
 import { realTimeDataService, LiveActivity, SystemHealth, LiveMetric } from '../services/realTimeDataService';
 import LiveIndicator from '../components/shared/LiveIndicator';
@@ -34,6 +37,8 @@ import MetricCard from '../components/shared/MetricCard';
 const OpsPortal = () => {
   const [selectedTimeframe, setSelectedTimeframe] = useState('today');
   const [selectedFilter, setSelectedFilter] = useState('all');
+  const [showRiddlerDemo, setShowRiddlerDemo] = useState(false);
+  const [selectedQuery, setSelectedQuery] = useState(0);
   const [liveData, setLiveData] = useState<{
     activities: LiveActivity[];
     systemHealth: SystemHealth[];
@@ -48,6 +53,34 @@ const OpsPortal = () => {
 
     return unsubscribe;
   }, []);
+
+  // Riddler query examples as specified by Bill
+  const riddlerQueries = [
+    {
+      query: "How many dumpsters were used at VUMC Micro Lab?",
+      response: "17 C&D dumpsters, 3 recycling dumpsters.",
+      type: "operational",
+      confidence: 96
+    },
+    {
+      query: "Dumpster cost in Chattanooga?",
+      response: "$450 per 30-yard dumpster, including 5 tons; each additional ton costs $101.",
+      type: "pricing",
+      confidence: 94
+    },
+    {
+      query: "Who provided dumpsters?",
+      response: "Vendor name, contact info, owner details, and service rating.",
+      type: "vendor",
+      confidence: 98
+    },
+    {
+      query: "Jerry's salary?",
+      response: "🔒 Access denied. Unauthorized payroll query triggered security alert #PAY-2024-0315.",
+      type: "permission-denied",
+      confidence: 100
+    }
+  ];
 
   // Static bid tracker data (will be made dynamic in next priority)
   const bidTracker = [
@@ -159,6 +192,21 @@ const OpsPortal = () => {
     return timestamp.toLocaleDateString();
   };
 
+  const getQueryTypeColor = (type: string) => {
+    switch (type) {
+      case 'operational':
+        return 'text-blue-600 bg-blue-100';
+      case 'pricing':
+        return 'text-green-600 bg-green-100';
+      case 'vendor':
+        return 'text-purple-600 bg-purple-100';
+      case 'permission-denied':
+        return 'text-red-600 bg-red-100';
+      default:
+        return 'text-gray-600 bg-gray-100';
+    }
+  };
+
   return (
     <div className="container mx-auto">
       <motion.div
@@ -177,9 +225,9 @@ const OpsPortal = () => {
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
               <div className="flex items-start space-x-3">
                 <Brain size={20} className="text-blue-600 mt-0.5" />
-                <div>
+                <div className="flex-1">
                   <h3 className="font-medium text-blue-900 mb-2">Powered by Tiny's AI Architecture</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm mb-3">
                     <div className="flex items-center space-x-2">
                       <Database size={16} className="text-blue-600" />
                       <div>
@@ -202,15 +250,95 @@ const OpsPortal = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="mt-3 pt-3 border-t border-blue-200">
+                  <div className="flex items-center justify-between pt-3 border-t border-blue-200">
                     <div className="flex items-center space-x-2 text-xs text-blue-700">
                       <CheckCircle size={12} />
                       <span>Validation: GPT → Grok → GPT (95%+ accuracy)</span>
                     </div>
+                    <button
+                      onClick={() => setShowRiddlerDemo(!showRiddlerDemo)}
+                      className="flex items-center text-xs text-blue-600 hover:text-blue-800 transition-colors"
+                    >
+                      <Search size={12} className="mr-1" />
+                      Try Riddler Queries
+                      <ArrowRight size={12} className="ml-1" />
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
+
+            {/* Riddler Demo Section */}
+            <AnimatePresence>
+              {showRiddlerDemo && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="bg-white border border-gray-200 rounded-lg p-4 mb-4"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="font-medium text-gray-900 flex items-center">
+                      <MessageSquare size={16} className="mr-2 text-blue-600" />
+                      Riddler Conversational Interface Demo
+                    </h4>
+                    <button
+                      onClick={() => setShowRiddlerDemo(false)}
+                      className="text-gray-400 hover:text-gray-600"
+                    >
+                      ×
+                    </button>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Riddler provides natural language access to Arbitor's data with permission-based security.
+                  </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <h5 className="text-sm font-medium text-gray-700 mb-2">Example Queries</h5>
+                      <div className="space-y-2">
+                        {riddlerQueries.map((item, index) => (
+                          <button
+                            key={index}
+                            onClick={() => setSelectedQuery(index)}
+                            className={`w-full text-left p-2 rounded text-xs transition-colors ${
+                              selectedQuery === index 
+                                ? 'bg-blue-100 border border-blue-300' 
+                                : 'bg-gray-50 hover:bg-gray-100 border border-gray-200'
+                            }`}
+                          >
+                            "{item.query}"
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h5 className="text-sm font-medium text-gray-700 mb-2">Response Preview</h5>
+                      <div className="bg-gray-50 border border-gray-200 rounded p-3">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className={`text-xs px-2 py-1 rounded-full ${getQueryTypeColor(riddlerQueries[selectedQuery].type)}`}>
+                            {riddlerQueries[selectedQuery].type.replace('-', ' ')}
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            {riddlerQueries[selectedQuery].confidence}% confidence
+                          </span>
+                        </div>
+                        <div className="text-sm text-gray-900">
+                          {riddlerQueries[selectedQuery].response}
+                        </div>
+                        {riddlerQueries[selectedQuery].type === 'permission-denied' && (
+                          <div className="mt-2 flex items-center text-xs text-red-600">
+                            <Shield size={12} className="mr-1" />
+                            Security alert triggered • Bill Fay notified
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
           
           <div className="flex items-center space-x-3">
