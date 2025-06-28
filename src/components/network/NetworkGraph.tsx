@@ -162,13 +162,13 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ onNodeSelect }) => {
     const simulation = d3.forceSimulation<NetworkNode>(nodes)
       .force('link', d3.forceLink<NetworkNode, NetworkLink>(links)
         .id(d => d.id)
-        .distance(d => 100 - d.strength * 5)
+        .distance(d => 80 - d.strength * 3) // Reduced from 100 - d.strength * 5
         .strength(d => d.strength / 10))
       .force('charge', d3.forceManyBody()
-        .strength(d => -300 - d.importance * 20))
+        .strength(d => -200 - d.importance * 15)) // Reduced from -300 - d.importance * 20
       .force('center', d3.forceCenter(width / 2, height / 2))
       .force('collision', d3.forceCollide()
-        .radius(d => 30 + d.importance * 2));
+        .radius(d => 15 + d.importance * 1)); // Reduced from 30 + d.importance * 2
 
     // Create arrow markers for directed links
     const defs = container.append('defs');
@@ -177,13 +177,13 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ onNodeSelect }) => {
       defs.append('marker')
         .attr('id', `arrow-${type}`)
         .attr('viewBox', '0 -5 10 10')
-        .attr('refX', 20)
+        .attr('refX', 15) // Reduced from 20 for smaller circles
         .attr('refY', 0)
-        .attr('markerWidth', 6)
-        .attr('markerHeight', 6)
+        .attr('markerWidth', 4) // Reduced from 6
+        .attr('markerHeight', 4) // Reduced from 6
         .attr('orient', 'auto')
         .append('path')
-        .attr('d', 'M0,-5L10,0L0,5')
+        .attr('d', 'M0,-3L6,0L0,3') // Smaller arrow
         .attr('fill', getLinkColor({ type } as NetworkLink));
     });
 
@@ -193,9 +193,8 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ onNodeSelect }) => {
       .data(links)
       .enter().append('line')
       .attr('stroke', d => getLinkColor(d))
-      .attr('stroke-opacity', 0.6)
-      .attr('stroke-width', d => Math.sqrt(d.strength) * 2)
-      .attr('marker-end', d => d.bidirectional ? '' : `url(#arrow-${d.type})`);
+      .attr('stroke-opacity', 0.4) // Reduced from 0.6
+      .attr('stroke-width', d => Math.sqrt(d.strength) * 0.8); // Reduced from * 2
 
     // Create bidirectional arrows for bidirectional links
     const bidirectionalLinks = container.append('g')
@@ -203,8 +202,8 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ onNodeSelect }) => {
       .data(links.filter(d => d.bidirectional))
       .enter().append('line')
       .attr('stroke', d => getLinkColor(d))
-      .attr('stroke-opacity', 0.3)
-      .attr('stroke-width', 1)
+      .attr('stroke-opacity', 0.2) // Reduced from 0.3
+      .attr('stroke-width', 0.8) // Reduced from 1
       .attr('marker-start', d => `url(#arrow-${d.type})`);
 
     // Create nodes
@@ -230,48 +229,49 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ onNodeSelect }) => {
           d.fy = null;
         }));
 
-    // Add circles for nodes
+    // Add circles for nodes - much smaller
     node.append('circle')
-      .attr('r', d => 15 + d.importance * 2)
+      .attr('r', d => 8 + d.importance * 1) // Significantly reduced from 15 + d.importance * 2
       .attr('fill', d => getNodeColor(d))
       .attr('stroke', '#ffffff')
-      .attr('stroke-width', 2)
+      .attr('stroke-width', 1.5) // Reduced from 2
       .on('mouseover', function(event, d) {
         d3.select(this)
           .transition()
           .duration(200)
-          .attr('r', (15 + d.importance * 2) * 1.2);
+          .attr('r', (8 + d.importance * 1) * 1.3); // Smaller hover effect
       })
       .on('mouseout', function(event, d) {
         d3.select(this)
           .transition()
           .duration(200)
-          .attr('r', 15 + d.importance * 2);
+          .attr('r', 8 + d.importance * 1);
       })
       .on('click', (event, d) => {
         setSelectedNode(d);
         if (onNodeSelect) onNodeSelect(d);
       });
 
-    // Add labels
+    // Add labels - positioned closer and smaller
     node.append('text')
       .text(d => d.name)
       .attr('font-family', 'Inter, sans-serif')
-      .attr('font-size', '12px')
-      .attr('font-weight', '500')
+      .attr('font-size', '10px') // Reduced from 12px
+      .attr('font-weight', '600') // Increased weight for better readability
       .attr('text-anchor', 'middle')
-      .attr('dy', 35)
-      .attr('fill', '#374151')
-      .style('pointer-events', 'none');
+      .attr('dy', 22) // Reduced from 35
+      .attr('fill', '#1f2937') // Darker color for better contrast
+      .style('pointer-events', 'none')
+      .style('text-shadow', '0 1px 2px rgba(255,255,255,0.8)'); // Add text shadow for better readability
 
-    // Add type indicators
+    // Add type indicators - smaller
     node.append('text')
       .text(d => d.type.charAt(0).toUpperCase())
       .attr('font-family', 'Inter, sans-serif')
-      .attr('font-size', '10px')
-      .attr('font-weight', '600')
+      .attr('font-size', '8px') // Reduced from 10px
+      .attr('font-weight', '700') // Increased weight
       .attr('text-anchor', 'middle')
-      .attr('dy', 4)
+      .attr('dy', 3) // Adjusted for smaller circles
       .attr('fill', '#ffffff')
       .style('pointer-events', 'none');
 
@@ -292,7 +292,7 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ onNodeSelect }) => {
       node.attr('transform', d => `translate(${d.x},${d.y})`);
     });
 
-    // Add legend
+    // Add legend - positioned better for smaller graph
     const legend = svg.append('g')
       .attr('class', 'legend')
       .attr('transform', 'translate(20, 20)');
@@ -308,17 +308,18 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ onNodeSelect }) => {
     legend.selectAll('g')
       .data(legendData)
       .enter().append('g')
-      .attr('transform', (d, i) => `translate(0, ${i * 25})`)
+      .attr('transform', (d, i) => `translate(0, ${i * 20})`) // Reduced from 25
       .each(function(d) {
         const g = d3.select(this);
         g.append('circle')
-          .attr('r', 8)
+          .attr('r', 6) // Reduced from 8
           .attr('fill', d.color);
         g.append('text')
-          .attr('x', 15)
-          .attr('y', 4)
+          .attr('x', 12) // Reduced from 15
+          .attr('y', 3) // Adjusted for smaller circle
           .attr('font-family', 'Inter, sans-serif')
-          .attr('font-size', '12px')
+          .attr('font-size', '11px') // Reduced from 12px
+          .attr('font-weight', '500')
           .attr('fill', '#374151')
           .text(d.label);
       });
