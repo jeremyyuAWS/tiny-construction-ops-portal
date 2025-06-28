@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Mic, MicOff, RotateCw, User, Bot, AlertTriangle, CheckCircle, Database, Brain, MessageSquare } from 'lucide-react';
+import { Send, Mic, MicOff, RotateCw, User, Bot, AlertTriangle, CheckCircle, Database, Brain, MessageSquare, Play, Pause, SkipForward } from 'lucide-react';
 import { TypeAnimation } from 'react-type-animation';
 
 interface ChatMessage {
@@ -36,8 +36,11 @@ const RiddlerChat: React.FC<RiddlerChatProps> = ({ selectedNodeContext }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [validationStep, setValidationStep] = useState<'idle' | 'gpt-processing' | 'grok-validating' | 'gpt-finalizing'>('idle');
+  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
+  const [currentAutoQuery, setCurrentAutoQuery] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const autoPlayTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Sample queries from Bill's specifications
   const sampleQueries = [
@@ -46,14 +49,56 @@ const RiddlerChat: React.FC<RiddlerChatProps> = ({ selectedNodeContext }) => {
     "Who provided dumpsters?",
     "Show me recent fraud alerts from Fang",
     "What's the status of 615 Main Street project?",
-    "Jerry's salary?",
     "List all active bids",
+    "Jerry's salary?",
     "Field data from last week"
   ];
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Autoplay functionality
+  useEffect(() => {
+    if (isAutoPlaying && !isLoading) {
+      autoPlayTimeoutRef.current = setTimeout(() => {
+        const query = sampleQueries[currentAutoQuery % sampleQueries.length];
+        handleSubmit(query);
+        setCurrentAutoQuery(prev => prev + 1);
+      }, 5000); // 5 second delay between queries
+    }
+
+    return () => {
+      if (autoPlayTimeoutRef.current) {
+        clearTimeout(autoPlayTimeoutRef.current);
+      }
+    };
+  }, [isAutoPlaying, currentAutoQuery, isLoading, sampleQueries]);
+
+  const startAutoPlay = () => {
+    setIsAutoPlaying(true);
+    setCurrentAutoQuery(0);
+    // Clear existing messages except system message for clean demo
+    setMessages(prev => prev.slice(0, 1));
+  };
+
+  const stopAutoPlay = () => {
+    setIsAutoPlaying(false);
+    if (autoPlayTimeoutRef.current) {
+      clearTimeout(autoPlayTimeoutRef.current);
+    }
+  };
+
+  const skipToNext = () => {
+    if (isAutoPlaying && !isLoading) {
+      if (autoPlayTimeoutRef.current) {
+        clearTimeout(autoPlayTimeoutRef.current);
+      }
+      const query = sampleQueries[currentAutoQuery % sampleQueries.length];
+      handleSubmit(query);
+      setCurrentAutoQuery(prev => prev + 1);
+    }
+  };
 
   const handleSubmit = async (query: string = inputValue) => {
     if (!query.trim() || isLoading) return;
@@ -180,6 +225,10 @@ const RiddlerChat: React.FC<RiddlerChatProps> = ({ selectedNodeContext }) => {
       return "Active bids: 3 projects. 450 Commerce Street ($2.8M, Turner Construction - 72% win probability). Riverside Office ($1.2M, Skanska - 45% probability). Downtown Garage (awarded).";
     }
     
+    if (lowerQuery.includes('field data')) {
+      return "Last week's field data: 47 photos uploaded from 615 Main Street, all GPS verified. Equipment utilization: CAT 320 (42 hours), safety inspections: 100% passed.";
+    }
+    
     return "I can access that information from Arbitor. Let me process your request through our validation workflow.";
   };
 
@@ -196,6 +245,22 @@ const RiddlerChat: React.FC<RiddlerChatProps> = ({ selectedNodeContext }) => {
     
     if (lowerQuery.includes('who provided dumpster')) {
       return "✅ Primary Vendor Details:\n**Waste Management Solutions**\n• Contact: Mike Johnson, Operations Manager\n• Phone: 615-555-0123 | Email: mjohnson@wmsolutions.com\n• Address: 1234 Industrial Blvd, Nashville, TN\n• Service rating: 4.8/5 (based on 127 projects)\n• Insurance: $5M liability (verified current)\n• Certifications: EPA compliant, OSHA certified\n• Response time: <2 hours for emergency service";
+    }
+    
+    if (lowerQuery.includes('fraud') || lowerQuery.includes('fang')) {
+      return "✅ Enhanced Fraud Alert Summary:\n**QuickDemo LLC** (High Risk)\n• Cash-only payment requests (🚨 Red flag)\n• No business license found in TN database\n• Virtual office address\n• Recommendation: Require full verification\n\n**Construction Services Inc** (Medium Risk)\n• Missing insurance documentation\n• Incomplete contractor license info\n• Recommendation: Request updated credentials";
+    }
+    
+    if (lowerQuery.includes('615 main')) {
+      return "✅ Comprehensive 615 Main Street Status:\n**Project Progress: 60% Complete**\n• Current Phase: 2nd floor structural removal\n• Equipment Active: CAT 320 excavator, Volvo L60H loader\n• Crew: Team Alpha (5 members, safety certified)\n• Daily Progress: 15% of 2nd floor completed today\n• Next Milestone: Basement excavation prep (March 25)\n• Weather Impact: None (favorable conditions)\n• Compliance: 100% safety standards maintained";
+    }
+    
+    if (lowerQuery.includes('bid')) {
+      return "✅ Detailed Active Bid Portfolio:\n**450 Commerce Street Demo** - Turner Construction\n• Value: $2.8M | Due: April 2, 2024\n• Win Probability: 72% (strong relationship)\n• Status: Submitted, awaiting decision\n\n**Riverside Office Complex** - Skanska USA\n• Value: $1.2M | Due: April 8, 2024\n• Win Probability: 45% (competitive field)\n• Status: Proposal in development\n\n**Downtown Parking Garage** - Brasfield & Gorrie\n• Value: $895K | Status: ✅ AWARDED\n• Start Date: March 20, 2024";
+    }
+    
+    if (lowerQuery.includes('field data')) {
+      return "✅ Comprehensive Field Data Summary (Last 7 Days):\n**615 Main Street Project**\n• Photos Uploaded: 47 images (all 4K quality)\n• GPS Verification: 100% on-site validated\n• Equipment Hours: CAT 320 (42.5h), Volvo L60H (38.2h)\n• Safety Inspections: 7/7 days passed (100%)\n• Weather Downtime: 0 hours\n• Progress Photos: Morning, midday, evening shifts\n• Haul Tickets: 12 loads (347 tons total)\n• Team Productivity: 115% of target efficiency";
     }
     
     return "✅ Response validated and enhanced with additional context from Arbitor's comprehensive data repository.";
@@ -252,24 +317,69 @@ const RiddlerChat: React.FC<RiddlerChatProps> = ({ selectedNodeContext }) => {
             </div>
           </div>
           
-          {validationStep !== 'idle' && (
+          <div className="flex items-center space-x-2">
+            {validationStep !== 'idle' && (
+              <div className="flex items-center space-x-2 mr-4">
+                {getValidationStageInfo() && (
+                  <>
+                    <span className={`text-sm ${getValidationStageInfo()!.color}`}>
+                      {getValidationStageInfo()!.text}
+                    </span>
+                    {getValidationStageInfo()!.icon}
+                  </>
+                )}
+              </div>
+            )}
+            
+            {/* Autoplay Controls */}
             <div className="flex items-center space-x-2">
-              {getValidationStageInfo() && (
-                <>
-                  <span className={`text-sm ${getValidationStageInfo()!.color}`}>
-                    {getValidationStageInfo()!.text}
-                  </span>
-                  {getValidationStageInfo()!.icon}
-                </>
+              <button
+                onClick={isAutoPlaying ? stopAutoPlay : startAutoPlay}
+                disabled={isLoading && !isAutoPlaying}
+                className={`flex items-center px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                  isAutoPlaying 
+                    ? 'bg-red-600 text-white hover:bg-red-700' 
+                    : 'bg-green-600 text-white hover:bg-green-700'
+                } disabled:opacity-50`}
+              >
+                {isAutoPlaying ? (
+                  <>
+                    <Pause size={14} className="mr-1" />
+                    Stop Demo
+                  </>
+                ) : (
+                  <>
+                    <Play size={14} className="mr-1" />
+                    Auto Demo
+                  </>
+                )}
+              </button>
+              
+              {isAutoPlaying && (
+                <button
+                  onClick={skipToNext}
+                  disabled={isLoading}
+                  className="flex items-center px-2 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                  title="Skip to next query"
+                >
+                  <SkipForward size={14} />
+                </button>
               )}
             </div>
-          )}
+          </div>
         </div>
         
         {/* Validation Workflow Indicator */}
         <div className="mt-3 flex items-center justify-between text-xs text-gray-500">
           <span>GPT → Grok → GPT Validation Active</span>
-          <span>95%+ accuracy guaranteed</span>
+          <div className="flex items-center space-x-4">
+            {isAutoPlaying && (
+              <span className="text-green-600 font-medium">
+                Auto Demo: Query {(currentAutoQuery % sampleQueries.length) + 1} of {sampleQueries.length}
+              </span>
+            )}
+            <span>95%+ accuracy guaranteed</span>
+          </div>
         </div>
       </div>
 
@@ -355,21 +465,23 @@ const RiddlerChat: React.FC<RiddlerChatProps> = ({ selectedNodeContext }) => {
       </div>
 
       {/* Sample Queries */}
-      <div className="px-4 py-2 border-t border-gray-200 bg-gray-50">
-        <p className="text-xs text-gray-600 mb-2">Try these sample queries:</p>
-        <div className="flex flex-wrap gap-2">
-          {sampleQueries.slice(0, 4).map((query, index) => (
-            <button
-              key={index}
-              onClick={() => handleSubmit(query)}
-              disabled={isLoading}
-              className="text-xs px-2 py-1 bg-white border border-gray-200 rounded hover:bg-gray-100 transition-colors disabled:opacity-50"
-            >
-              "{query}"
-            </button>
-          ))}
+      {!isAutoPlaying && (
+        <div className="px-4 py-2 border-t border-gray-200 bg-gray-50">
+          <p className="text-xs text-gray-600 mb-2">Try these sample queries:</p>
+          <div className="flex flex-wrap gap-2">
+            {sampleQueries.slice(0, 4).map((query, index) => (
+              <button
+                key={index}
+                onClick={() => handleSubmit(query)}
+                disabled={isLoading}
+                className="text-xs px-2 py-1 bg-white border border-gray-200 rounded hover:bg-gray-100 transition-colors disabled:opacity-50"
+              >
+                "{query}"
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Input */}
       <div className="p-4 border-t border-gray-200">
@@ -380,14 +492,14 @@ const RiddlerChat: React.FC<RiddlerChatProps> = ({ selectedNodeContext }) => {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
-            placeholder="Ask Riddler anything about Tiny's operations..."
-            disabled={isLoading}
+            placeholder={isAutoPlaying ? "Auto demo in progress..." : "Ask Riddler anything about Tiny's operations..."}
+            disabled={isLoading || isAutoPlaying}
             className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
           />
           
           <button
             onClick={() => setIsListening(!isListening)}
-            disabled={isLoading}
+            disabled={isLoading || isAutoPlaying}
             className={`p-2 rounded-lg border transition-colors ${
               isListening 
                 ? 'bg-red-600 text-white border-red-600' 
@@ -399,12 +511,27 @@ const RiddlerChat: React.FC<RiddlerChatProps> = ({ selectedNodeContext }) => {
           
           <button
             onClick={() => handleSubmit()}
-            disabled={isLoading || !inputValue.trim()}
+            disabled={isLoading || !inputValue.trim() || isAutoPlaying}
             className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? <RotateCw size={20} className="animate-spin" /> : <Send size={20} />}
           </button>
         </div>
+        
+        {isAutoPlaying && (
+          <div className="mt-2 text-xs text-center text-gray-600">
+            <span className="inline-flex items-center">
+              Auto demo in progress • Next query in ~5 seconds
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                className="ml-2"
+              >
+                <RotateCw size={12} />
+              </motion.div>
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
