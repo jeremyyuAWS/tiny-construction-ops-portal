@@ -24,7 +24,8 @@ import {
   Brain,
   Database,
   MessageSquare,
-  ArrowRight
+  ArrowRight,
+  Monitor
 } from 'lucide-react';
 import { realTimeDataService, LiveActivity, SystemHealth, LiveMetric } from '../services/realTimeDataService';
 import LiveIndicator from '../components/shared/LiveIndicator';
