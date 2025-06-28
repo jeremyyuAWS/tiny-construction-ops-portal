@@ -61,11 +61,24 @@ const RiddlerChat: React.FC<RiddlerChatProps> = ({ selectedNodeContext }) => {
   // Autoplay functionality
   useEffect(() => {
     if (isAutoPlaying && !isLoading) {
+      // Clear any existing timeout
+      if (autoPlayTimeoutRef.current) {
+        clearTimeout(autoPlayTimeoutRef.current);
+      }
+
       autoPlayTimeoutRef.current = setTimeout(() => {
-        const query = sampleQueries[currentAutoQuery % sampleQueries.length];
-        handleSubmit(query);
-        setCurrentAutoQuery(prev => prev + 1);
-      }, 5000); // 5 second delay between queries
+        if (currentAutoQuery < sampleQueries.length) {
+          const query = sampleQueries[currentAutoQuery];
+          handleSubmit(query);
+          setCurrentAutoQuery(prev => prev + 1);
+        } else {
+          // Reset and continue cycling
+          setCurrentAutoQuery(0);
+          const query = sampleQueries[0];
+          handleSubmit(query);
+          setCurrentAutoQuery(1);
+        }
+      }, currentAutoQuery === 0 ? 1000 : 5000); // Start first query quickly, then 5 second intervals
     }
 
     return () => {
@@ -73,13 +86,21 @@ const RiddlerChat: React.FC<RiddlerChatProps> = ({ selectedNodeContext }) => {
         clearTimeout(autoPlayTimeoutRef.current);
       }
     };
-  }, [isAutoPlaying, currentAutoQuery, isLoading, sampleQueries]);
+  }, [isAutoPlaying, currentAutoQuery, isLoading]);
 
   const startAutoPlay = () => {
     setIsAutoPlaying(true);
     setCurrentAutoQuery(0);
     // Clear existing messages except system message for clean demo
     setMessages(prev => prev.slice(0, 1));
+    
+    // Start first query immediately
+    setTimeout(() => {
+      if (sampleQueries.length > 0) {
+        handleSubmit(sampleQueries[0]);
+        setCurrentAutoQuery(1);
+      }
+    }, 500);
   };
 
   const stopAutoPlay = () => {
@@ -94,7 +115,9 @@ const RiddlerChat: React.FC<RiddlerChatProps> = ({ selectedNodeContext }) => {
       if (autoPlayTimeoutRef.current) {
         clearTimeout(autoPlayTimeoutRef.current);
       }
-      const query = sampleQueries[currentAutoQuery % sampleQueries.length];
+      
+      const nextIndex = currentAutoQuery % sampleQueries.length;
+      const query = sampleQueries[nextIndex];
       handleSubmit(query);
       setCurrentAutoQuery(prev => prev + 1);
     }
@@ -375,7 +398,8 @@ const RiddlerChat: React.FC<RiddlerChatProps> = ({ selectedNodeContext }) => {
           <div className="flex items-center space-x-4">
             {isAutoPlaying && (
               <span className="text-green-600 font-medium">
-                Auto Demo: Query {(currentAutoQuery % sampleQueries.length) + 1} of {sampleQueries.length}
+                Auto Demo: Query {((currentAutoQuery - 1) % sampleQueries.length) + 1} of {sampleQueries.length}
+                {!isLoading && " • Next query in ~5 seconds"}
               </span>
             )}
             <span>95%+ accuracy guaranteed</span>
@@ -518,7 +542,7 @@ const RiddlerChat: React.FC<RiddlerChatProps> = ({ selectedNodeContext }) => {
           </button>
         </div>
         
-        {isAutoPlaying && (
+        {isAutoPlaying && !isLoading && (
           <div className="mt-2 text-xs text-center text-gray-600">
             <span className="inline-flex items-center">
               Auto demo in progress • Next query in ~5 seconds
@@ -528,6 +552,21 @@ const RiddlerChat: React.FC<RiddlerChatProps> = ({ selectedNodeContext }) => {
                 className="ml-2"
               >
                 <RotateCw size={12} />
+              </motion.div>
+            </span>
+          </div>
+        )}
+        
+        {isAutoPlaying && isLoading && (
+          <div className="mt-2 text-xs text-center text-blue-600">
+            <span className="inline-flex items-center">
+              Processing query through GPT → Grok → GPT validation...
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                className="ml-2"
+              >
+                <Brain size={12} />
               </motion.div>
             </span>
           </div>
