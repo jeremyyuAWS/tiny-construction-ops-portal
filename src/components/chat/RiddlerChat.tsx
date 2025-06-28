@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Mic, MicOff, RotateCw, User, Bot, AlertTriangle, CheckCircle, Database, Brain } from 'lucide-react';
+import { Send, Mic, MicOff, RotateCw, User, Bot, AlertTriangle, CheckCircle, Database, Brain, MessageSquare } from 'lucide-react';
 import { TypeAnimation } from 'react-type-animation';
 
 interface ChatMessage {
