@@ -374,7 +374,7 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ onNodeSelect }) => {
         </button>
       </div>
 
-      <div className="absolute top-4 left-4 z-10 bg-white border border-gray-200 rounded-lg p-3 shadow-sm">
+      <div className="absolute bottom-4 right-4 z-10 bg-white border border-gray-200 rounded-lg p-3 shadow-sm">
         <div className="flex items-center space-x-2 mb-2">
           <Info size={16} className="text-blue-600" />
           <span className="text-sm font-medium text-gray-900">Network Overview</span>
