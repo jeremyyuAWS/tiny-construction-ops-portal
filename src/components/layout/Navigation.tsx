@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Users, Monitor, Shield, TrendingUp, Menu, X, FileText, Network } from 'lucide-react';
+import { Users, Monitor, Shield, TrendingUp, Menu, X, FileText, Network, GitBranch } from 'lucide-react';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -14,6 +14,7 @@ const Navigation = () => {
     { name: 'Documents', path: '/documents', icon: <FileText size={20} /> },
     { name: 'Field Ops & Compliance', path: '/field-ops', icon: <Shield size={20} /> },
     { name: 'Insights & Retraining', path: '/insights', icon: <TrendingUp size={20} /> },
+    { name: 'Validation Workflow', path: '/validation-workflow', icon: <GitBranch size={20} /> },
   ];
 
   // Close menu when navigation happens
@@ -26,13 +27,13 @@ const Navigation = () => {
       {/* Desktop navigation - always visible */}
       <div className="hidden md:flex fixed top-20 left-0 right-0 z-20 bg-white shadow-sm border-b border-gray-200">
         <div className="container mx-auto px-6">
-          <div className="flex items-center justify-center md:justify-start">
+          <div className="flex items-center justify-center md:justify-start overflow-x-auto">
             {navItems.map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
                 className={({ isActive }) =>
-                  `flex items-center px-6 py-4 transition-colors relative ${
+                  `flex items-center px-4 py-4 transition-colors relative whitespace-nowrap ${
                     isActive
                       ? 'text-black font-medium'
                       : 'text-secondary hover:text-black'
@@ -42,7 +43,7 @@ const Navigation = () => {
                 {({ isActive }) => (
                   <>
                     <span className="mr-2">{item.icon}</span>
-                    <span>{item.name}</span>
+                    <span className="text-sm">{item.name}</span>
                     {isActive && (
                       <motion.div
                         layoutId="activeTab"
@@ -71,22 +72,26 @@ const Navigation = () => {
       </div>
 
       {/* Mobile bottom navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-gray-200 shadow-lg">
-        <div className="grid grid-cols-6">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-gray-200 shadow-lg overflow-x-auto">
+        <div className="flex min-w-max">
           {navItems.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
               className={({ isActive }) =>
-                `flex flex-col items-center py-3 px-2 transition-colors ${
+                `flex flex-col items-center py-2 px-3 transition-colors min-w-0 ${
                   isActive
                     ? 'text-black font-medium'
                     : 'text-secondary'
                 }`
               }
             >
-              {item.icon}
-              <span className="text-xs mt-1">{item.name.split(' ')[0]}</span>
+              <div className="text-sm mb-1">{item.icon}</div>
+              <span className="text-xs leading-tight text-center">
+                {item.name.split(' ')[0]}
+                {item.name.includes('&') && <br />}
+                {item.name.includes('&') && item.name.split(' ').slice(-1)[0]}
+              </span>
             </NavLink>
           ))}
         </div>

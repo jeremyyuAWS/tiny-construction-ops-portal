@@ -1,13 +1,18 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { HelpCircle } from 'lucide-react';
 
-const Header = () => {
+interface HeaderProps {
+  onHelpClick?: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ onHelpClick }) => {
   return (
     <motion.header
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="bg-white border-b border-gray-200 px-6 py-4 shadow-sm"
+      className="bg-white border-b border-gray-200 px-6 py-4 shadow-sm relative"
     >
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center space-x-2">
@@ -24,6 +29,7 @@ const Header = () => {
             </p>
           </div>
         </div>
+        
         <div className="hidden md:flex items-center space-x-4">
           <div className="text-right">
             <div className="text-sm text-secondary px-3 py-1 rounded-full bg-gray-100">
@@ -38,6 +44,18 @@ const Header = () => {
           </button>
         </div>
       </div>
+      
+      {/* Help Button */}
+      <button
+        onClick={onHelpClick}
+        className="absolute top-4 right-4 p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors shadow-lg group"
+        title="Help & System Overview"
+      >
+        <HelpCircle size={20} />
+        <div className="absolute -bottom-8 right-0 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+          Help & Overview
+        </div>
+      </button>
     </motion.header>
   );
 };

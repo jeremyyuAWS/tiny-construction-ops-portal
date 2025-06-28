@@ -9,13 +9,13 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const [showWelcomeModal, setShowWelcomeModal] = useState(true);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
 
   // Check if welcome modal has been shown before
   useEffect(() => {
     const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
-    if (hasSeenWelcome) {
-      setShowWelcomeModal(false);
+    if (!hasSeenWelcome) {
+      setShowWelcomeModal(true);
     }
   }, []);
 
@@ -24,9 +24,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     localStorage.setItem('hasSeenWelcome', 'true');
   };
 
+  const openHelpModal = () => {
+    setShowWelcomeModal(true);
+  };
+
   return (
     <div className="min-h-screen bg-background-light flex flex-col">
-      <Header />
+      <Header onHelpClick={openHelpModal} />
       <Navigation />
       <main className="flex-1 p-4 md:p-6 mt-0 md:mt-16 mb-16 md:mb-0 overflow-auto">
         <motion.div

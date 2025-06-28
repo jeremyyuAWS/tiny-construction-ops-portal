@@ -6,6 +6,7 @@ import ArbitorRiddler from '../pages/ArbitorRiddler';
 import FieldOpsCompliance from '../pages/FieldOpsCompliance';
 import InsightsRetraining from '../pages/InsightsRetraining';
 import DocumentManagement from '../pages/DocumentManagement';
+import ValidationWorkflow from '../pages/ValidationWorkflow';
 
 const AppRoutes = () => {
   return (
@@ -16,6 +17,7 @@ const AppRoutes = () => {
       <Route path="/field-ops" element={<FieldOpsCompliance />} />
       <Route path="/insights" element={<InsightsRetraining />} />
       <Route path="/documents" element={<DocumentManagement />} />
+      <Route path="/validation-workflow" element={<ValidationWorkflow />} />
       {/* Legacy route redirect */}
       <Route path="/riddler-os" element={<Navigate to="/ops-portal" replace />} />
       <Route path="*" element={<Navigate to="/agents" replace />} />
