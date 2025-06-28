@@ -1,7 +1,7 @@
-🛠 PRD: Tiny's AI-Powered Operating System – "Riddler"
+🛠 PRD: OpsPortal - Tiny's AI-Powered Operating System
 📌 Phase I Objective
 
-Deploy an AI-powered, multi-agent platform ("Riddler") for Tiny's Demolition & Recycling. The system will automate inbound communications, classify and route documents, monitor for fraud and compliance, and provide real-time decision support for preconstruction workflows — all through a centralized dashboard.
+Deploy an AI-powered, multi-agent platform for Tiny's Demolition & Recycling. The system will automate inbound communications, classify and route documents, monitor for fraud and compliance, and provide real-time decision support for preconstruction workflows — all through a centralized operational dashboard.
 
 🏗️ System Architecture
 
@@ -26,8 +26,8 @@ Deploy an AI-powered, multi-agent platform ("Riddler") for Tiny's Demolition & R
 ### OpsPortal (Operations Dashboard)
 - Central operational dashboard for real-time oversight
 - Provides live monitoring of alerts, bid tracking, system health
-- Streamlit-based interface optimized for mobile via Jamf
 - Daily operating interface for Tiny's team
+- Real-time communications, bids, and alerts management
 
 ## Validation Workflow
 **Four-Step GPT → Grok → GPT Process:**
@@ -36,7 +36,7 @@ Deploy an AI-powered, multi-agent platform ("Riddler") for Tiny's Demolition & R
 3. Grok.ai sends detailed refinement prompts back to ChatGPT
 4. ChatGPT integrates Grok's feedback, finalizing response (~95%+ confidence)
 
-🧱 App Structure (4 Tabs)
+🧱 App Structure (5 Tabs)
 
 1. Agent Gallery
 
@@ -48,21 +48,30 @@ Includes:
 * Sample inputs/outputs for each agent
 * Live chat interaction or logs for agents like Sift, Fang, Prod
 
-
 2. OpsPortal (Core Operations Dashboard)
 
 Purpose: Daily operating interface for Tiny's team
-Built with mobile optimization via Jamf
-Sections:
+Features:
 
 * Inbound Activity Feed: Email + call parsing by Sift + Triage
 * Bid Tracker: Visual status of detected bids from BidSentry
 * Alerts & Flags: From Fang, Shear, and DemoScope
 * Tasks + Routing: Synced with monday.com (incl. confidence scores)
-* Audit Trail: Escalation logs, redactions, compliance events
+* System Health: Live monitoring of all integrations
+* Real-time metrics with live updates
 
+3. Documents
 
-3. Field Ops & Compliance
+Purpose: Automated file management and compliance
+Features:
+
+* Intelligent document naming and organization
+* GPS validation and metadata extraction
+* Compliance scanning (GDPR/CCPA/TN)
+* Version control and audit trails
+* Integration with field data collection
+
+4. Field Ops & Compliance
 
 Purpose: Track and validate site-level activity
 Features:
@@ -72,8 +81,7 @@ Features:
 * Compliance overlays from Shear and Jamf lockdown validation
 * Alerts on unverified data (e.g., photo not geotagged on site)
 
-
-4. Insights & Retraining
+5. Insights & Retraining
 
 Purpose: Data-driven oversight + monthly model improvement
 Includes:
@@ -82,7 +90,6 @@ Includes:
 * Agent performance (volume, accuracy, false positives)
 * Summary reports: unread-deleted emails, unresolved flags
 * Retraining logs for RAG-type and classifier agents
-
 
 🤖 Agent Overview (Phase I)
 
@@ -122,8 +129,6 @@ Prod
 	Chat-type
 	Bid follow-up, response logging, summary reports
 
-
-
 🔌 Integrations (Phase I)
 
 * Emails: Outlook (monitored by Sift)
@@ -133,9 +138,7 @@ Prod
 * Field Data: DemoField, Tenna, ClockShark, FuelCloud
 * Compliance: Jamf, Azure IP
 * LLMs & Frameworks: LlamaIndex (context), LYZR agent orchestration
-* UI Layer: Streamlit for real-time, branded dashboard
 * Bid Sources: BuildingConnected, ShareFile, Dropbox, etc.
-
 
 📂 File & Folder Conventions
 
@@ -144,7 +147,6 @@ Prod
 * Call Logs: 1.4-Calls/
 * Field Data: 3.0-Field Data/
 * Bid Proposals: 01-PreCon/1.2-Proposals/
-
 
 ✅ Success Criteria
 
