@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Users, Monitor, Shield, TrendingUp, Menu, X, FileText } from 'lucide-react';
+import { Users, Monitor, Shield, TrendingUp, Menu, X, FileText, Network } from 'lucide-react';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -10,6 +10,7 @@ const Navigation = () => {
   const navItems = [
     { name: 'Agent Gallery', path: '/agents', icon: <Users size={20} /> },
     { name: 'OpsPortal', path: '/ops-portal', icon: <Monitor size={20} /> },
+    { name: 'Arbitor/Riddler', path: '/arbitor-riddler', icon: <Network size={20} /> },
     { name: 'Documents', path: '/documents', icon: <FileText size={20} /> },
     { name: 'Field Ops & Compliance', path: '/field-ops', icon: <Shield size={20} /> },
     { name: 'Insights & Retraining', path: '/insights', icon: <TrendingUp size={20} /> },
@@ -71,7 +72,7 @@ const Navigation = () => {
 
       {/* Mobile bottom navigation */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-gray-200 shadow-lg">
-        <div className="grid grid-cols-5">
+        <div className="grid grid-cols-6">
           {navItems.map((item) => (
             <NavLink
               key={item.path}
