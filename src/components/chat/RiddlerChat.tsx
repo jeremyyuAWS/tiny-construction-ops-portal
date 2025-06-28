@@ -420,10 +420,10 @@ const RiddlerChat: React.FC<RiddlerChatProps> = ({ selectedNodeContext }) => {
             >
               <div className={`max-w-[80%] ${message.role === 'user' ? 'order-2' : 'order-1'}`}>
                 <div className={`p-3 rounded-lg border ${getMessageBorderColor(message)} ${
-                  message.role === 'user' ? 'bg-blue-600 text-white border-blue-600' : ''
+                  message.role === 'user' ? 'bg-gray-100 text-black border-gray-300' : ''
                 }`}>
                   <div className="flex items-start space-x-2">
-                    <div className={`p-1 rounded ${message.role === 'user' ? 'bg-blue-500' : 'bg-gray-100'}`}>
+                    <div className={`p-1 rounded ${message.role === 'user' ? 'bg-gray-200' : 'bg-gray-100'}`}>
                       {getMessageIcon(message)}
                     </div>
                     <div className="flex-1">
@@ -443,7 +443,7 @@ const RiddlerChat: React.FC<RiddlerChatProps> = ({ selectedNodeContext }) => {
                   {/* Message metadata */}
                   <div className="mt-2 pt-2 border-t border-opacity-20 border-gray-300">
                     <div className="flex items-center justify-between text-xs">
-                      <span className={message.role === 'user' ? 'text-blue-100' : 'text-gray-500'}>
+                      <span className={message.role === 'user' ? 'text-gray-600' : 'text-gray-500'}>
                         {message.timestamp.toLocaleTimeString()}
                       </span>
                       
@@ -458,7 +458,7 @@ const RiddlerChat: React.FC<RiddlerChatProps> = ({ selectedNodeContext }) => {
                               {message.validationStage}
                             </span>
                           )}
-                          <span className={message.role === 'user' ? 'text-blue-100' : 'text-gray-500'}>
+                          <span className={message.role === 'user' ? 'text-gray-600' : 'text-gray-500'}>
                             {message.confidence}% confidence
                           </span>
                         </div>
@@ -467,7 +467,7 @@ const RiddlerChat: React.FC<RiddlerChatProps> = ({ selectedNodeContext }) => {
                     
                     {message.sources && message.sources.length > 0 && (
                       <div className="mt-1">
-                        <span className={`text-xs ${message.role === 'user' ? 'text-blue-100' : 'text-gray-500'}`}>
+                        <span className={`text-xs ${message.role === 'user' ? 'text-gray-600' : 'text-gray-500'}`}>
                           Sources: {message.sources.join(', ')}
                         </span>
                       </div>
