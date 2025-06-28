@@ -9,7 +9,7 @@ const Navigation = () => {
 
   const navItems = [
     { name: 'Agent Gallery', path: '/agents', icon: <Users size={20} /> },
-    { name: 'Riddler OS', path: '/riddler-os', icon: <Monitor size={20} /> },
+    { name: 'OpsPortal', path: '/ops-portal', icon: <Monitor size={20} /> },
     { name: 'Documents', path: '/documents', icon: <FileText size={20} /> },
     { name: 'Field Ops & Compliance', path: '/field-ops', icon: <Shield size={20} /> },
     { name: 'Insights & Retraining', path: '/insights', icon: <TrendingUp size={20} /> },

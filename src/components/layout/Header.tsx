@@ -19,12 +19,20 @@ const Header = () => {
             <p className="text-xs text-accent-indigo">
               AI-Powered Operating System for Construction
             </p>
+            <p className="text-xs text-gray-500 mt-1">
+              Arbitor • Riddler • OpsPortal
+            </p>
           </div>
         </div>
         <div className="hidden md:flex items-center space-x-4">
-          <span className="text-sm text-secondary px-3 py-1 rounded-full bg-gray-100">
-            Demolition & Recycling
-          </span>
+          <div className="text-right">
+            <div className="text-sm text-secondary px-3 py-1 rounded-full bg-gray-100">
+              Demolition & Recycling
+            </div>
+            <div className="text-xs text-gray-500 mt-1">
+              GPT → Grok → GPT Validation
+            </div>
+          </div>
           <button className="px-4 py-2 text-sm bg-black text-white rounded-md hover:bg-gray-800 transition-colors">
             Contact Tiny's
           </button>

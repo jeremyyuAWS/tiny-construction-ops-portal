@@ -1,7 +1,40 @@
-🛠 PRD: Tiny’s AI-Powered Operating System – “Riddler”
+🛠 PRD: Tiny's AI-Powered Operating System – "Riddler"
 📌 Phase I Objective
 
-Deploy an AI-powered, multi-agent platform (“Riddler”) for Tiny’s Demolition & Recycling. The system will automate inbound communications, classify and route documents, monitor for fraud and compliance, and provide real-time decision support for preconstruction workflows — all through a centralized Streamlit dashboard.
+Deploy an AI-powered, multi-agent platform ("Riddler") for Tiny's Demolition & Recycling. The system will automate inbound communications, classify and route documents, monitor for fraud and compliance, and provide real-time decision support for preconstruction workflows — all through a centralized dashboard.
+
+🏗️ System Architecture
+
+## Core Components
+
+### Arbitor (Data Engine & Repository)
+- Comprehensive data repository and intelligence engine
+- Stores and manages all company data (documents, transcripts, financials, compliance, GPS data, audit trails)
+- Enforces permissions and data governance
+- Acts as single source of truth for all organizational data
+
+### Riddler (Conversational Interface)
+- Conversational user interface for global search and queries
+- Interacts directly with Arbitor's data based on user-specific permissions
+- Handles natural language queries about company operations
+- Examples:
+  - "How many dumpsters were used at VUMC Micro Lab?" → "17 C&D dumpsters, 3 recycling dumpsters"
+  - "Dumpster cost in Chattanooga?" → "$450 per 30-yard dumpster, including 5 tons; each additional ton costs $101"
+  - "Who provided dumpsters?" → "Vendor name, contact info, owner details, and service rating"
+- Permission-sensitive queries trigger appropriate security responses
+
+### OpsPortal (Operations Dashboard)
+- Central operational dashboard for real-time oversight
+- Provides live monitoring of alerts, bid tracking, system health
+- Streamlit-based interface optimized for mobile via Jamf
+- Daily operating interface for Tiny's team
+
+## Validation Workflow
+**Four-Step GPT → Grok → GPT Process:**
+1. ChatGPT interprets user query, retrieves data from Arbitor and external sources (~90% confidence)
+2. Grok.ai audits the initial response, identifying gaps or inaccuracies
+3. Grok.ai sends detailed refinement prompts back to ChatGPT
+4. ChatGPT integrates Grok's feedback, finalizing response (~95%+ confidence)
 
 🧱 App Structure (4 Tabs)
 
@@ -16,10 +49,10 @@ Includes:
 * Live chat interaction or logs for agents like Sift, Fang, Prod
 
 
-2. Riddler OS (Core Ops Dashboard)
+2. OpsPortal (Core Operations Dashboard)
 
-Purpose: Daily operating interface for Tiny’s team
-Built in Streamlit with mobile optimization via Jamf
+Purpose: Daily operating interface for Tiny's team
+Built with mobile optimization via Jamf
 Sections:
 
 * Inbound Activity Feed: Email + call parsing by Sift + Triage
@@ -115,15 +148,9 @@ Prod
 
 ✅ Success Criteria
 
-* 
-
-85% bid invites auto-routed with correct metadata
-
+* 85% bid invites auto-routed with correct metadata
 * <2% unread-deleted emails without action taken
 * All flagged fraud >$100K reviewed within 24h
-* 
-
-90% field uploads geo-validated
-
+* 90% field uploads geo-validated
 * At least one agent retrained with live usage data
-
+* 95%+ accuracy maintained through GPT → Grok → GPT validation

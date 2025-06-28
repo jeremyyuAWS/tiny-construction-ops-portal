@@ -20,13 +20,17 @@ import {
   Bell,
   Wifi,
   WifiOff,
-  Zap
+  Zap,
+  Brain,
+  Database,
+  MessageSquare,
+  ArrowRight
 } from 'lucide-react';
 import { realTimeDataService, LiveActivity, SystemHealth, LiveMetric } from '../services/realTimeDataService';
 import LiveIndicator from '../components/shared/LiveIndicator';
 import MetricCard from '../components/shared/MetricCard';
 
-const RiddlerOS = () => {
+const OpsPortal = () => {
   const [selectedTimeframe, setSelectedTimeframe] = useState('today');
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [liveData, setLiveData] = useState<{
@@ -163,10 +167,49 @@ const RiddlerOS = () => {
       >
         <div className="mb-6 flex justify-between items-start">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-primary mb-2">Riddler OS</h1>
-            <p className="text-secondary">
-              Daily operating interface for Tiny's team - real-time communications, bids, and alerts.
+            <h1 className="text-2xl md:text-3xl font-bold text-primary mb-2">OpsPortal</h1>
+            <p className="text-secondary mb-3">
+              Central operational dashboard for real-time alerts, bid tracking, system health, and operations oversight.
             </p>
+            
+            {/* System Architecture Info */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <div className="flex items-start space-x-3">
+                <Brain size={20} className="text-blue-600 mt-0.5" />
+                <div>
+                  <h3 className="font-medium text-blue-900 mb-2">Powered by Tiny's AI Architecture</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div className="flex items-center space-x-2">
+                      <Database size={16} className="text-blue-600" />
+                      <div>
+                        <div className="font-medium text-blue-900">Arbitor</div>
+                        <div className="text-blue-700">Data Engine & Repository</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <MessageSquare size={16} className="text-blue-600" />
+                      <div>
+                        <div className="font-medium text-blue-900">Riddler</div>
+                        <div className="text-blue-700">Conversational Interface</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Monitor size={16} className="text-blue-600" />
+                      <div>
+                        <div className="font-medium text-blue-900">OpsPortal</div>
+                        <div className="text-blue-700">Operations Dashboard</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-3 pt-3 border-t border-blue-200">
+                    <div className="flex items-center space-x-2 text-xs text-blue-700">
+                      <CheckCircle size={12} />
+                      <span>Validation: GPT → Grok → GPT (95%+ accuracy)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           
           <div className="flex items-center space-x-3">
@@ -431,4 +474,4 @@ const RiddlerOS = () => {
   );
 };
 
-export default RiddlerOS;
+export default OpsPortal;
